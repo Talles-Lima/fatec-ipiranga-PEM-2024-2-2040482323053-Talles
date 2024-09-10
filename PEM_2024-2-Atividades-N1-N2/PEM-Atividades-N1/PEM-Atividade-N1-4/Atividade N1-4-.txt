@@ -1,0 +1,99 @@
+/*--------------------------------------------------------*
+* Disciplina: Programaçao Estruturada e Modular *
+*          Prof. Carlos Veríssimo                                    *
+*--------------------------------------------------------*
+* Objetivo do Programa:Desenvolva um código (linguagem C) que,
+a partir do tabuleiro montado (Atividade N1-3), seja simulado os 3 lances do "Xeque Pastor"*
+* Data - 06/09/2024                                               * 
+* Autor: Talles de Lima*
+*--------------------------------------------------------*/
+
+
+#include <stdio.h>
+#include <string.h>
+
+#define SIZE 256 // 64 posições * 4 caracteres por posição
+
+void exibirTabuleiro(const char tabuleiro[SIZE]) {
+    for (int i = 0; i < SIZE; i += 4) {
+        if (i % 32 == 0) printf("\n");
+        printf("%s ", &tabuleiro[i]);
+    }
+    printf("\n");
+}
+
+// Mapeia a posição do tabuleiro (0-63) para o índice do array
+int posicaoParaIndice(int linha, int coluna) {
+    return (7 - linha) * 32 + coluna * 4;
+}
+
+void atualizarTabuleiro(char tabuleiro[SIZE], int origem, int destino, const char* peca) {
+    snprintf(&tabuleiro[origem], 4, "...");
+    snprintf(&tabuleiro[destino], 4, "%s", peca);
+}
+
+int main() {
+    char tabuleiro[SIZE];
+    
+    // Inicializa todas as casas com "[ ]"
+    for (int i = 0; i < SIZE; i += 4) {
+        snprintf(&tabuleiro[i], 4, "[ ]");
+    }
+
+    // Posiciona as peças brancas
+    snprintf(&tabuleiro[posicaoParaIndice(0, 0)], 4, "BR1"); // Torre
+    snprintf(&tabuleiro[posicaoParaIndice(0, 1)], 4, "BC1"); // Cavalo
+    snprintf(&tabuleiro[posicaoParaIndice(0, 2)], 4, "BB1"); // Bispo
+    snprintf(&tabuleiro[posicaoParaIndice(0, 3)], 4, "BD1"); // Dama
+    snprintf(&tabuleiro[posicaoParaIndice(0, 4)], 4, "BR1"); // Rei
+    snprintf(&tabuleiro[posicaoParaIndice(0, 5)], 4, "BB2"); // Bispo
+    snprintf(&tabuleiro[posicaoParaIndice(0, 6)], 4, "BC2"); // Cavalo
+    snprintf(&tabuleiro[posicaoParaIndice(0, 7)], 4, "BT2"); // Torre
+
+    for (int i = 0; i < 8; i++) {
+        snprintf(&tabuleiro[posicaoParaIndice(1, i)], 4, "BP%d", i + 1); // Peões brancos
+    }
+
+    // Posiciona as peças pretas
+    snprintf(&tabuleiro[posicaoParaIndice(7, 0)], 4, "PR1"); // Torre
+    snprintf(&tabuleiro[posicaoParaIndice(7, 1)], 4, "PC1"); // Cavalo
+    snprintf(&tabuleiro[posicaoParaIndice(7, 2)], 4, "PB1"); // Bispo
+    snprintf(&tabuleiro[posicaoParaIndice(7, 3)], 4, "PD1"); // Dama
+    snprintf(&tabuleiro[posicaoParaIndice(7, 4)], 4, "PR1"); // Rei
+    snprintf(&tabuleiro[posicaoParaIndice(7, 5)], 4, "PB2"); // Bispo
+    snprintf(&tabuleiro[posicaoParaIndice(7, 6)], 4, "PC2"); // Cavalo
+    snprintf(&tabuleiro[posicaoParaIndice(7, 7)], 4, "PT2"); // Torre
+
+    for (int i = 0; i < 8; i++) {
+        snprintf(&tabuleiro[posicaoParaIndice(6, i)], 4, "PP%d", i + 1); // Peões pretos
+    }
+
+    // Exibe o tabuleiro inicial
+    printf("Tabuleiro inicial:\n");
+    exibirTabuleiro(tabuleiro);
+
+    // Jogada #1
+    printf("\nJogada #1:\n");
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(1, 4), posicaoParaIndice(3, 4), "BP5"); // Peão do Rei branco de e2 para e4
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(6, 4), posicaoParaIndice(4, 4), "PP5"); // Peão do Rei preto de e7 para e5
+    exibirTabuleiro(tabuleiro);
+
+    // Jogada #2
+    printf("\nJogada #2:\n");
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(0, 5), posicaoParaIndice(4, 3), "BB1"); // Bispo do Rei branco de f1 para c4
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(7, 1), posicaoParaIndice(5, 2), "PC1"); // Cavalo da Dama preto de b8 para c6
+    exibirTabuleiro(tabuleiro);
+
+    // Jogada #3
+    printf("\nJogada #3:\n");
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(0, 3), posicaoParaIndice(4, 4), "DQ"); // Dama branca de d1 para h5
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(7, 6), posicaoParaIndice(5, 5), "PK1"); // Cavalo do Rei preto de g8 para f6
+    exibirTabuleiro(tabuleiro);
+
+    // Jogada #4 (Xeque Mate)
+    printf("\nJogada #4 (Xeque Mate):\n");
+    atualizarTabuleiro(tabuleiro, posicaoParaIndice(4, 4), posicaoParaIndice(5, 5), "DQ#"); // Dama branca captura Peão do Rei preto em f7
+    exibirTabuleiro(tabuleiro);
+
+    return 0;
+}
